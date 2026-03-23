@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بلدية داعل — البحث عن التسجيل</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+:root{
+  --pr:#1b3d6e;--prl:#2558a0;--prd:#122d52;--ac:#c0933a;
+  --bg:#eef2f7;--cd:#fff;--tx:#1a2535;--mu:#607080;--bd:#ccd8e8;
+  --ok:#1f6b47;--er:#b83030;--ra:14px;--sh:0 4px 20px rgba(27,61,110,.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:var(--bg);min-height:100vh;direction:rtl}
+
+.hdr{width:100%;background:linear-gradient(150deg,var(--prd),var(--pr) 55%,var(--prl));color:#fff;box-shadow:0 4px 24px rgba(27,61,110,.22)}
+.hdr-top{display:flex;align-items:center;gap:18px;padding:18px 36px 14px}
+.embl{width:56px;height:56px;background:rgba(255,255,255,.1);border:2px solid rgba(192,147,58,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0}
+.hdr-top h1{font-size:1.25rem;font-weight:900}.hdr-top p{font-size:.78rem;opacity:.7;margin-top:2px}
+.hdr-nav{background:rgba(0,0,0,.2);padding:0 36px;display:flex;gap:4px}
+.nav-link{padding:10px 18px;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.7);text-decoration:none;border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:6px}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-link.active{color:#fff;border-bottom-color:var(--ac)}
+
+.wrap{max-width:720px;margin:0 auto;padding:36px 16px 60px}
+
+/* بطاقة البحث */
+.search-hero{background:linear-gradient(135deg,var(--pr),var(--prl));border-radius:24px;padding:32px 36px;margin-bottom:28px;color:#fff;text-align:center;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(27,61,110,.25)}
+.search-hero::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05)}
+.search-hero h2{font-size:1.4rem;font-weight:900;margin-bottom:6px;position:relative}
+.search-hero p{font-size:.84rem;opacity:.75;margin-bottom:22px;position:relative;line-height:1.6}
+
+/* حقل بحث */
+.search-box{position:relative;max-width:500px;margin:0 auto}
+.search-input{width:100%;padding:14px 50px 14px 18px;border:none;border-radius:14px;font-family:'Cairo',sans-serif;font-size:.95rem;font-weight:700;color:var(--tx);outline:none;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.search-input::placeholder{color:var(--mu)}
+.search-btn{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:10px;background:var(--pr);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.search-btn:hover{background:var(--prd)}
+
+/* تبويبات نوع البحث */
+.search-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:22px}
+.stab{padding:8px 18px;border:2px solid rgba(255,255,255,.3);border-radius:20px;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .2s;background:rgba(255,255,255,.08)}
+.stab:hover{background:rgba(255,255,255,.18);color:#fff}
+.stab.on{background:#fff;color:var(--pr);border-color:#fff}
+
+/* كارت النتيجة */
+.result-area{min-height:160px}
+.result-card{background:var(--cd);border-radius:20px;box-shadow:var(--sh);overflow:hidden;animation:fadeUp .35s cubic-bezier(.4,0,.2,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.result-header{padding:18px 22px 14px;border-bottom:1.5px solid var(--bd);display:flex;align-items:center;gap:14px}
+.result-status-ico{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0}
+.result-status-ico.ok{background:#e8f5ee}
+.result-status-ico.pending{background:#fff8e8}
+.result-status-ico.unknown{background:#f0f2f5}
+.result-name{font-size:1.05rem;font-weight:900;color:var(--tx)}
+.result-ref{font-size:.76rem;color:var(--mu);font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:.76rem;font-weight:800;margin-top:6px}
+.status-badge.ok{background:#e8f5ee;color:var(--ok)}
+.status-badge.pending{background:#fff8e8;color:var(--warn)}
+.status-badge.review{background:#fbeaea;color:var(--er)}
+
+.result-body{padding:18px 22px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rfield{background:var(--bg);border-radius:10px;padding:10px 13px}
+.rf-label{font-size:.71rem;color:var(--mu);font-weight:700;margin-bottom:2px}
+.rf-val{font-size:.88rem;font-weight:800;color:var(--tx)}
+
+.result-footer{padding:12px 22px 16px;border-top:1.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.result-footer small{font-size:.72rem;color:var(--mu)}
+.contact-btn{padding:8px 16px;background:linear-gradient(135deg,var(--pr),var(--prl));color:#fff;border:none;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer}
+
+/* لا نتائج */
+.no-result{background:var(--cd);border-radius:20px;box-shadow:var(--sh);padding:40px 24px;text-align:center;animation:fadeUp .35s}
+.no-result .nr-ico{font-size:3rem;margin-bottom:12px}
+.no-result h3{font-size:1rem;font-weight:900;color:var(--tx);margin-bottom:8px}
+.no-result p{font-size:.83rem;color:var(--mu);line-height:1.7}
+.no-result .try-reg{display:inline-block;margin-top:16px;padding:10px 22px;background:linear-gradient(135deg,var(--pr),var(--prl));color:#fff;border-radius:12px;font-size:.82rem;font-weight:800;text-decoration:none}
+
+/* حالة أولية */
+.empty-state{text-align:center;padding:40px 20px}
+.empty-state .es-ico{font-size:3.5rem;margin-bottom:14px;opacity:.5}
+.empty-state p{font-size:.86rem;color:var(--mu);line-height:1.8}
+.search-tips{background:var(--cd);border-radius:16px;box-shadow:var(--sh);padding:20px 22px;margin-top:20px}
+.search-tips h4{font-size:.85rem;font-weight:800;color:var(--tx);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.tip-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd);font-size:.8rem;color:var(--mu)}
+.tip-item:last-child{border-bottom:none}
+.tip-ico{font-size:1rem;flex-shrink:0;margin-top:1px}
+
+/* شاشة التحميل */
+.loading{text-align:center;padding:40px;animation:fadeUp .3s}
+.loader{width:40px;height:40px;border:4px solid var(--bd);border-top-color:var(--pr);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* إشعار */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#222;color:#fff;padding:11px 22px;border-radius:12px;font-size:.83rem;font-weight:700;transition:transform .3s;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  .hdr-top{padding:14px 14px 12px}.hdr-nav{padding:0 14px}
+  .wrap{padding:20px 10px 50px}.search-hero{padding:22px 16px}
+  .result-grid{grid-template-columns:1fr}.search-tabs{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="embl">🏛️</div>
+    <div>
+      <h1>بلدية مدينة داعل</h1>
+      <p>محافظة درعا — الجمهورية العربية السورية</p>
+    </div>
+  </div>
+  <div class="hdr-nav">
+    <a href="index.html" class="nav-link">📋 التسجيل</a>
+    <a href="stats.html" class="nav-link">📊 الإحصائيات</a>
+    <a href="search.html" class="nav-link active">🔍 البحث</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="search-hero">
+    <h2>🔍 البحث عن تسجيلك</h2>
+    <p>تحقق من حالة تسجيلك بدون الحاجة للتواصل مع البلدية<br>ابحث بالاسم أو الرقم المرجعي أو رقم الوثيقة</p>
+
+    <!-- تبويبات نوع البحث -->
+    <div class="search-tabs">
+      <div class="stab on" id="tab-ref" onclick="setTab('ref',this)">🔢 الرقم المرجعي</div>
+      <div class="stab" id="tab-doc" onclick="setTab('doc',this)">📄 رقم الوثيقة</div>
+      <div class="stab" id="tab-name" onclick="setTab('name',this)">👤 الاسم</div>
+    </div>
+
+    <!-- حقل البحث -->
+    <div class="search-box">
+      <input type="text" class="search-input" id="search-input"
+        placeholder="أدخل الرقم المرجعي مثال: DAL-2026-DB-123456"
+        onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="search-btn" onclick="doSearch()">🔍</button>
+    </div>
+  </div>
+
+  <!-- منطقة النتائج -->
+  <div class="result-area" id="result-area">
+    <div class="empty-state">
+      <div class="es-ico">🔎</div>
+      <p>أدخل بياناتك في حقل البحث أعلاه للتحقق من حالة تسجيلك<br>
+      يمكنك البحث بثلاث طرق مختلفة</p>
+    </div>
+    <div class="search-tips">
+      <h4>💡 كيفية البحث</h4>
+      <div class="tip-item"><span class="tip-ico">🔢</span><span><strong>الرقم المرجعي:</strong> الرقم الذي استلمته بعد التسجيل — مثال: DAL-2026-DB-123456</span></div>
+      <div class="tip-item"><span class="tip-ico">📄</span><span><strong>رقم الوثيقة:</strong> رقم دفتر العائلة أو رقم الوثيقة أو رقم القيد</span></div>
+      <div class="tip-item"><span class="tip-ico">👤</span><span><strong>الاسم:</strong> اسم رب الأسرة أو اسم الزوجة — يكفي جزء من الاسم</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ نظام البحث ══
+// حالياً يبحث في بيانات تجريبية محلية
+// عند ربط Google Sheet يُستبدل بـ API حقيقي
+
+let searchTab = 'ref';
+const SCRIPT_URL = ''; // ضع هنا رابط Netlify Function للبحث عند الإعداد
+
+// بيانات تجريبية — تُحذف عند ربط الـ Sheet
+const DEMO_RECORDS = [
+  {
+    refNum: 'DAL-2026-DB-100001', docType: 'دفتر العائلة', docNum: '123456789',
+    qaid: '001', name: 'محمد أحمد علي الزعبي', neighborhood: 'الحي الشرقي',
+    street: 'شارع السوق', stamp: 'نعم مختوم', status: 'مقبول', familyCount: '5',
+    timestamp: '15/01/2026، 10:30 ص'
+  },
+  {
+    refNum: 'DAL-2026-BY-100002', docType: 'البيان العائلي', docNum: '54321',
+    qaid: '002', name: 'خالد محمود سالم الحريري', neighborhood: 'الحي الغربي',
+    street: 'الشارع الشمالي', stamp: 'غير مختوم', status: 'قيد المراجعة', familyCount: '3',
+    timestamp: '16/01/2026، 02:15 م'
+  },
+  {
+    refNum: 'DAL-2026-MT-100003', docType: 'مطلقة', docNum: '98765',
+    qaid: '003', name: 'سمر عبد الله الحسن الدرعاوي', neighborhood: 'الحي الشمالي',
+    street: 'دوار السوق', stamp: 'نعم مختوم', status: 'مقبول', familyCount: '2',
+    timestamp: '17/01/2026، 11:00 ص'
+  },
+];
+
+function setTab(tab, el){
+  searchTab = tab;
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  const inp = document.getElementById('search-input');
+  const ph = {
+    ref: 'أدخل الرقم المرجعي — مثال: DAL-2026-DB-123456',
+    doc: 'أدخل رقم الوثيقة أو رقم القيد',
+    name: 'أدخل اسم رب الأسرة أو الزوجة',
+  };
+  inp.placeholder = ph[tab];
+  inp.value = '';
+  inp.focus();
+}
+
+async function doSearch(){
+  const q = document.getElementById('search-input').value.trim();
+  if(!q){ showToast('⚠️ الرجاء إدخال نص للبحث'); return; }
+  if(q.length < 2){ showToast('⚠️ أدخل على الأقل حرفين'); return; }
+
+  showLoading();
+
+  // محاكاة تأخير الشبكة
+  await new Promise(r=>setTimeout(r, 800));
+
+  // ── إذا كان هناك SCRIPT_URL حقيقي، استخدمه ──
+  // if(SCRIPT_URL){ ... fetch من الـ API ... }
+
+  // ── بحث في البيانات التجريبية ──
+  let results = [];
+  const ql = q.toLowerCase();
+
+  if(searchTab === 'ref'){
+    results = DEMO_RECORDS.filter(r => r.refNum.toLowerCase().includes(ql));
+  } else if(searchTab === 'doc'){
+    results = DEMO_RECORDS.filter(r =>
+      r.docNum.includes(q) || r.qaid.includes(q)
+    );
+  } else {
+    results = DEMO_RECORDS.filter(r => r.name.includes(q));
+  }
+
+  if(results.length === 0){
+    showNoResult(q);
+  } else {
+    showResults(results);
+  }
+}
+
+function showLoading(){
+  document.getElementById('result-area').innerHTML = `
+    <div class="loading">
+      <div class="loader"></div>
+      <p style="color:var(--mu);font-size:.85rem;font-weight:700">جاري البحث...</p>
+    </div>`;
+}
+
+function showResults(records){
+  const html = records.map(r => resultCard(r)).join('');
+  document.getElementById('result-area').innerHTML = html;
+}
+
+function resultCard(r){
+  const isOk = r.status === 'مقبول';
+  const isPending = r.status === 'قيد المراجعة';
+  const icoClass = isOk ? 'ok' : isPending ? 'pending' : 'unknown';
+  const ico = isOk ? '✅' : isPending ? '⏳' : '❓';
+  const badgeClass = isOk ? 'ok' : isPending ? 'pending' : 'review';
+  const stampOk = r.stamp === 'نعم مختوم';
+
+  return `
+  <div class="result-card" style="margin-bottom:14px">
+    <div class="result-header">
+      <div class="result-status-ico ${icoClass}">${ico}</div>
+      <div>
+        <div class="result-name">${r.name}</div>
+        <div class="result-ref">🔢 ${r.refNum}</div>
+        <div class="status-badge ${badgeClass}">${ico} ${r.status}</div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="result-grid">
+        <div class="rfield"><div class="rf-label">نوع الوثيقة</div><div class="rf-val">${r.docType}</div></div>
+        <div class="rfield"><div class="rf-label">رقم الوثيقة / القيد</div><div class="rf-val">${r.docNum} / ${r.qaid}</div></div>
+        <div class="rfield"><div class="rf-label">الحي / المنطقة</div><div class="rf-val">${r.neighborhood}</div></div>
+        <div class="rfield"><div class="rf-label">الشارع / المعلم</div><div class="rf-val">${r.street}</div></div>
+        <div class="rfield"><div class="rf-label">عدد أفراد الأسرة</div><div class="rf-val">${r.familyCount} أفراد</div></div>
+        <div class="rfield" style="background:${stampOk?'#e8f5ee':'#fff8e8'}">
+          <div class="rf-label">ختم البلدية</div>
+          <div class="rf-val" style="color:${stampOk?'var(--ok)':'var(--warn)'}">${stampOk?'✅ مختوم':'⚠️ غير مختوم'}</div>
+        </div>
+      </div>
+    </div>
+    <div class="result-footer">
+      <small>📅 تاريخ التسجيل: ${r.timestamp}</small>
+      <button class="contact-btn" onclick="copyRef('${r.refNum}')">📋 نسخ الرقم المرجعي</button>
+    </div>
+  </div>`;
+}
+
+function showNoResult(q){
+  document.getElementById('result-area').innerHTML = `
+    <div class="no-result">
+      <div class="nr-ico">🔍</div>
+      <h3>لم يُعثر على أي سجل</h3>
+      <p>لم نجد نتائج مطابقة لـ "<strong>${q}</strong>"<br>
+      تأكد من صحة البيانات المدخلة، أو قد لا يكون التسجيل مكتملاً بعد.<br><br>
+      إذا كنت قد سجّلت ولم تجد بياناتك، يرجى التواصل مع البلدية.</p>
+      <a href="index.html" class="try-reg">📋 التسجيل الآن</a>
+    </div>`;
+}
+
+function copyRef(ref){
+  navigator.clipboard?.writeText(ref).catch(()=>{});
+  showToast('✅ تم نسخ الرقم المرجعي: ' + ref);
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// الضغط على Enter
+document.getElementById('search-input').addEventListener('keydown', e=>{
+  if(e.key==='Enter') doSearch();
+});
+</script>
+</body>
+</html>

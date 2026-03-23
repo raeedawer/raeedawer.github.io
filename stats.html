@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بلدية داعل — الإحصائيات ومتابعة التسليم</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+:root{
+  --pr:#1b3d6e;--prl:#2558a0;--prd:#122d52;--ac:#c0933a;
+  --bg:#eef2f7;--cd:#fff;--tx:#1a2535;--mu:#607080;--bd:#ccd8e8;
+  --ok:#1f6b47;--er:#b83030;--warn:#c07a00;--ra:14px;
+  --sh:0 4px 20px rgba(27,61,110,.10);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:var(--bg);min-height:100vh;direction:rtl}
+
+/* HEADER */
+.hdr{width:100%;background:linear-gradient(150deg,var(--prd),var(--pr) 55%,var(--prl));color:#fff;box-shadow:0 4px 24px rgba(27,61,110,.22)}
+.hdr-top{display:flex;align-items:center;gap:18px;padding:18px 36px 14px}
+.embl{width:56px;height:56px;background:rgba(255,255,255,.1);border:2px solid rgba(192,147,58,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0}
+.hdr-top h1{font-size:1.25rem;font-weight:900}.hdr-top p{font-size:.78rem;opacity:.7;margin-top:2px}
+.hdr-nav{background:rgba(0,0,0,.2);padding:0 36px;display:flex;gap:4px}
+.nav-link{padding:10px 18px;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.7);text-decoration:none;border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:6px}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-link.active{color:#fff;border-bottom-color:var(--ac)}
+
+.wrap{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
+
+/* بلوك دور التسليم */
+.delivery-block{background:linear-gradient(135deg,var(--pr),var(--prl));border-radius:24px;padding:32px 40px;margin-bottom:32px;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(27,61,110,.25)}
+.delivery-block::before{content:'';position:absolute;top:-40px;left:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05)}
+.delivery-block::after{content:'';position:absolute;bottom:-60px;right:-20px;width:240px;height:240px;border-radius:50%;background:rgba(192,147,58,.10)}
+.delivery-label{font-size:.85rem;font-weight:700;opacity:.75;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.delivery-subtitle{font-size:.8rem;opacity:.6;margin-top:4px}
+.delivery-row{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;position:relative;z-index:1}
+.delivery-main{flex:1}
+.delivery-num{font-size:5rem;font-weight:900;line-height:1;letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.delivery-range{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.range-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:6px 16px;font-size:.82rem;font-weight:700}
+.range-arrow{font-size:1.2rem;opacity:.7}
+.delivery-edit{background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.3);border-radius:12px;padding:16px 18px;min-width:220px}
+.delivery-edit label{display:block;font-size:.74rem;font-weight:700;opacity:.8;margin-bottom:5px}
+.delivery-edit input{width:100%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;padding:8px 12px;color:#fff;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;outline:none;direction:ltr;text-align:center;transition:all .2s}
+.delivery-edit input:focus{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.6)}
+.delivery-edit input::placeholder{opacity:.5;color:#fff}
+.save-btn{width:100%;margin-top:8px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.35);border-radius:8px;padding:8px;color:#fff;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s}
+.save-btn:hover{background:rgba(255,255,255,.32)}
+.save-btn.saved{background:rgba(31,107,71,.5);border-color:rgba(31,107,71,.7)}
+
+/* شبكة الإحصائيات */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+.stats-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:28px}
+
+.stat-card{background:var(--cd);border-radius:var(--ra);box-shadow:var(--sh);padding:20px 18px;position:relative;overflow:hidden;transition:transform .2s}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:0 var(--ra) 0 60px;opacity:.08}
+.stat-card.green::before{background:var(--ok)}
+.stat-card.blue::before{background:var(--pr)}
+.stat-card.amber::before{background:var(--ac)}
+.stat-card.red::before{background:var(--er)}
+.stat-card.purple::before{background:#7b4fa0}
+.stat-card.gray::before{background:var(--mu)}
+
+.stat-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:10px}
+.stat-card.green .stat-ico{background:#e8f5ee;color:var(--ok)}
+.stat-card.blue .stat-ico{background:#e6eef8;color:var(--pr)}
+.stat-card.amber .stat-ico{background:#fdf4e3;color:var(--ac)}
+.stat-card.red .stat-ico{background:#fbeaea;color:var(--er)}
+.stat-card.purple .stat-ico{background:#f3eaf9;color:#7b4fa0}
+.stat-card.gray .stat-ico{background:#f0f2f5;color:var(--mu)}
+
+.stat-num{font-size:2.2rem;font-weight:900;color:var(--tx);line-height:1;margin-bottom:4px;font-variant-numeric:tabular-nums}
+.stat-label{font-size:.78rem;font-weight:700;color:var(--mu)}
+.stat-sub{font-size:.71rem;color:var(--mu);margin-top:3px;opacity:.75}
+.stat-bar{height:4px;background:var(--bd);border-radius:99px;margin-top:10px;overflow:hidden}
+.stat-bar-fill{height:100%;border-radius:99px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.stat-card.green .stat-bar-fill{background:var(--ok)}
+.stat-card.amber .stat-bar-fill{background:var(--ac)}
+.stat-card.red .stat-bar-fill{background:var(--er)}
+
+/* بطاقة كبيرة — التسليم الأسبوعي */
+.wide-card{background:var(--cd);border-radius:var(--ra);box-shadow:var(--sh);padding:22px 24px}
+.wide-card h3{font-size:.88rem;font-weight:800;color:var(--tx);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.progress-track{height:12px;background:var(--bd);border-radius:99px;overflow:hidden;margin-bottom:6px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--ok),#2ec878);border-radius:99px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.progress-labels{display:flex;justify-content:space-between;font-size:.72rem;color:var(--mu);font-weight:700}
+
+/* قسم التحديث */
+.update-bar{background:var(--cd);border-radius:var(--ra);box-shadow:var(--sh);padding:18px 22px;margin-bottom:28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.update-bar .ub-label{font-size:.82rem;font-weight:700;color:var(--mu);white-space:nowrap}
+.update-bar input[type=number]{border:2px solid var(--bd);border-radius:10px;padding:8px 12px;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;color:var(--tx);background:var(--bg);outline:none;width:100px;text-align:center;transition:all .2s}
+.update-bar input:focus{border-color:var(--prl);background:#fff}
+.update-bar .ub-btn{padding:9px 20px;background:linear-gradient(135deg,var(--pr),var(--prl));color:#fff;border:none;border-radius:10px;font-family:'Cairo',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .2s;white-space:nowrap}
+.update-bar .ub-btn:hover{opacity:.9}
+.update-bar .ub-sep{width:1px;height:28px;background:var(--bd);flex-shrink:0}
+
+/* إشعار تحديث */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#222;color:#fff;padding:11px 22px;border-radius:12px;font-size:.83rem;font-weight:700;transition:transform .3s;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* تحديث آخر */
+.last-update{font-size:.74rem;color:var(--mu);font-weight:600}
+
+@media(max-width:900px){.stats-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){
+  .hdr-top{padding:14px 14px 12px}.hdr-nav{padding:0 14px}
+  .wrap{padding:18px 10px 50px}.delivery-block{padding:22px 18px}
+  .delivery-num{font-size:3.5rem}.stats-grid{grid-template-columns:1fr 1fr}
+  .stats-grid-2{grid-template-columns:1fr}.delivery-row{flex-direction:column}
+  .delivery-edit{min-width:unset;width:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="embl">🏛️</div>
+    <div>
+      <h1>بلدية مدينة داعل</h1>
+      <p>محافظة درعا — الجمهورية العربية السورية</p>
+    </div>
+  </div>
+  <div class="hdr-nav">
+    <a href="index.html" class="nav-link">📋 التسجيل</a>
+    <a href="stats.html" class="nav-link active">📊 الإحصائيات</a>
+    <a href="search.html" class="nav-link">🔍 البحث</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- بلوك آخر رقم وصل التسليم -->
+  <div class="delivery-block">
+    <div class="delivery-row">
+      <div class="delivery-main">
+        <div class="delivery-label">📦 آخر رقم وصل إليه التسليم</div>
+        <div class="delivery-num" id="last-delivered-num">—</div>
+        <div class="delivery-range" id="delivery-range-display">
+          <span class="range-pill" id="range-from-display">—</span>
+          <span class="range-arrow">←</span>
+          <span class="range-pill" id="range-to-display">—</span>
+          <span class="range-pill" id="range-week-display" style="background:rgba(192,147,58,.3)">—</span>
+        </div>
+        <div class="delivery-subtitle" id="last-update-time">لم يتم تحديث بيانات التسليم بعد</div>
+      </div>
+      <div class="delivery-edit">
+        <label>تحديث آخر رقم تم تسليمه</label>
+        <input type="text" id="inp-last" placeholder="أدخل الرقم" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        <label style="margin-top:10px">من رقم</label>
+        <input type="text" id="inp-from" placeholder="بداية الجولة" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        <label style="margin-top:6px">إلى رقم</label>
+        <input type="text" id="inp-to" placeholder="نهاية الجولة" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        <label style="margin-top:6px">الأسبوع / الفترة</label>
+        <input type="text" id="inp-week" placeholder="مثال: الأسبوع الثالث">
+        <button class="save-btn" id="save-delivery-btn" onclick="saveDelivery()">💾 حفظ التحديث</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- شبكة الإحصائيات الرئيسية -->
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="stat-ico">📝</div>
+      <div class="stat-num" id="st-total">0</div>
+      <div class="stat-label">إجمالي المسجلين</div>
+      <div class="stat-sub">دفاتر + بيانات + مطلقات</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-ico">✅</div>
+      <div class="stat-num" id="st-delivered">0</div>
+      <div class="stat-label">تم التسليم</div>
+      <div class="stat-sub" id="st-delivered-pct">0% من المجموع</div>
+      <div class="stat-bar"><div class="stat-bar-fill" id="bar-delivered" style="width:0%"></div></div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-ico">⏳</div>
+      <div class="stat-num" id="st-pending">0</div>
+      <div class="stat-label">لم يُسلَّم بعد</div>
+      <div class="stat-sub" id="st-pending-pct">0% من المجموع</div>
+      <div class="stat-bar"><div class="stat-bar-fill" id="bar-pending" style="width:0%"></div></div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-ico">📋</div>
+      <div class="stat-num" id="st-unstamped">0</div>
+      <div class="stat-label">غير مختومة</div>
+      <div class="stat-sub">لم تستلم إيصالاً بعد</div>
+      <div class="stat-bar"><div class="stat-bar-fill" id="bar-unstamped" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="stats-grid-2">
+    <!-- جرات الغاز المطلوبة -->
+    <div class="stat-card amber">
+      <div class="stat-ico">🔵</div>
+      <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap">
+        <div>
+          <div class="stat-num" id="st-cylinders">0</div>
+          <div class="stat-label">جرة غاز مطلوبة</div>
+          <div class="stat-sub">لتغطية جميع العائلات المسجلة</div>
+        </div>
+        <div style="margin-bottom:4px">
+          <div style="font-size:.72rem;color:var(--mu);font-weight:700;margin-bottom:4px">عدد الجرات لكل عائلة</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="number" id="cyl-per-family" value="1" min="1" max="10"
+              style="width:60px;border:2px solid var(--bd);border-radius:8px;padding:6px;font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;text-align:center;outline:none;background:var(--bg)"
+              oninput="recalcCylinders()">
+            <span style="font-size:.76rem;color:var(--mu);font-weight:600">/ عائلة</span>
+          </div>
+        </div>
+      </div>
+      <div class="stat-bar" style="margin-top:12px"><div class="stat-bar-fill" style="width:100%;background:var(--ac)"></div></div>
+    </div>
+
+    <!-- شريط تقدم التسليم الكلي -->
+    <div class="wide-card">
+      <h3>📈 نسبة التقدم في التسليم</h3>
+      <div class="progress-track">
+        <div class="progress-fill" id="main-progress" style="width:0%"></div>
+      </div>
+      <div class="progress-labels">
+        <span id="prog-delivered-label">تم تسليم 0</span>
+        <span id="prog-pct-label" style="color:var(--ok);font-size:.8rem">0%</span>
+        <span id="prog-total-label">المجموع 0</span>
+      </div>
+
+      <!-- تفصيل حسب نوع الوثيقة -->
+      <div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="text-align:center;background:var(--bg);border-radius:10px;padding:10px 6px">
+          <div style="font-size:1.4rem">📖</div>
+          <div style="font-size:1.1rem;font-weight:900;color:var(--pr)" id="st-books">0</div>
+          <div style="font-size:.7rem;color:var(--mu);font-weight:700">دفتر عائلة</div>
+        </div>
+        <div style="text-align:center;background:var(--bg);border-radius:10px;padding:10px 6px">
+          <div style="font-size:1.4rem">📋</div>
+          <div style="font-size:1.1rem;font-weight:900;color:var(--pr)" id="st-stmts">0</div>
+          <div style="font-size:.7rem;color:var(--mu);font-weight:700">بيان عائلي</div>
+        </div>
+        <div style="text-align:center;background:var(--bg);border-radius:10px;padding:10px 6px">
+          <div style="font-size:1.4rem">📑</div>
+          <div style="font-size:1.1rem;font-weight:900;color:var(--pr)" id="st-divs">0</div>
+          <div style="font-size:.7rem;color:var(--mu);font-weight:700">مطلقة</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ بيانات محلية (تُستبدل لاحقاً بـ API من Google Sheet) ══
+// هذه القيم يُدخلها المسؤول يدوياً في حقول التحديث
+// عند ربط Google Sheet ستُجلب تلقائياً
+
+const STORE_KEY = 'dael_stats_v1';
+
+function loadData(){
+  try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || defaultData(); }
+  catch{ return defaultData(); }
+}
+function saveData(d){ localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
+function defaultData(){
+  return {
+    lastDelivered: null, rangeFrom: null, rangeTo: null, rangeWeek: '',
+    lastUpdateTime: null,
+    // إحصائيات — يُدخلها المسؤول أو تُجلب من Sheet
+    total: 0, delivered: 0, unstamped: 0,
+    books: 0, stmts: 0, divs: 0,
+    cylPerFamily: 1,
+  };
+}
+
+let data = loadData();
+
+function render(){
+  const d = data;
+  // آخر رقم تسليم
+  document.getElementById('last-delivered-num').textContent = d.lastDelivered ?? '—';
+  document.getElementById('range-from-display').textContent = d.rangeFrom ? 'من ' + d.rangeFrom : '—';
+  document.getElementById('range-to-display').textContent = d.rangeTo ? 'إلى ' + d.rangeTo : '—';
+  document.getElementById('range-week-display').textContent = d.rangeWeek || '—';
+  document.getElementById('last-update-time').textContent = d.lastUpdateTime
+    ? 'آخر تحديث: ' + d.lastUpdateTime : 'لم يتم تحديث بيانات التسليم بعد';
+
+  // إحصائيات
+  const total = d.total || 0;
+  const delivered = Math.min(d.delivered || 0, total);
+  const pending = Math.max(total - delivered, 0);
+  const unstamped = d.unstamped || 0;
+  const pct = total > 0 ? Math.round(delivered / total * 100) : 0;
+  const pendPct = total > 0 ? Math.round(pending / total * 100) : 0;
+  const unstPct = total > 0 ? Math.round(unstamped / total * 100) : 0;
+
+  document.getElementById('st-total').textContent = total.toLocaleString('ar-EG');
+  document.getElementById('st-delivered').textContent = delivered.toLocaleString('ar-EG');
+  document.getElementById('st-delivered-pct').textContent = pct + '% من المجموع';
+  document.getElementById('bar-delivered').style.width = pct + '%';
+  document.getElementById('st-pending').textContent = pending.toLocaleString('ar-EG');
+  document.getElementById('st-pending-pct').textContent = pendPct + '% من المجموع';
+  document.getElementById('bar-pending').style.width = pendPct + '%';
+  document.getElementById('st-unstamped').textContent = unstamped.toLocaleString('ar-EG');
+  document.getElementById('bar-unstamped').style.width = unstPct + '%';
+
+  // جرات الغاز
+  const cyl = Math.ceil(total * (d.cylPerFamily || 1));
+  document.getElementById('st-cylinders').textContent = cyl.toLocaleString('ar-EG');
+  document.getElementById('cyl-per-family').value = d.cylPerFamily || 1;
+
+  // شريط التقدم
+  document.getElementById('main-progress').style.width = pct + '%';
+  document.getElementById('prog-delivered-label').textContent = 'تم تسليم ' + delivered.toLocaleString('ar-EG');
+  document.getElementById('prog-pct-label').textContent = pct + '%';
+  document.getElementById('prog-total-label').textContent = 'المجموع ' + total.toLocaleString('ar-EG');
+
+  // تفصيل حسب النوع
+  document.getElementById('st-books').textContent = (d.books || 0).toLocaleString('ar-EG');
+  document.getElementById('st-stmts').textContent = (d.stmts || 0).toLocaleString('ar-EG');
+  document.getElementById('st-divs').textContent = (d.divs || 0).toLocaleString('ar-EG');
+}
+
+function saveDelivery(){
+  const last = document.getElementById('inp-last').value.trim();
+  const from = document.getElementById('inp-from').value.trim();
+  const to   = document.getElementById('inp-to').value.trim();
+  const week = document.getElementById('inp-week').value.trim();
+  if(!last){ showToast('⚠️ الرجاء إدخال آخر رقم تم تسليمه'); return; }
+  data.lastDelivered = last;
+  data.rangeFrom = from || null;
+  data.rangeTo = to || null;
+  data.rangeWeek = week || '';
+  data.lastUpdateTime = new Date().toLocaleString('ar-SY');
+  saveData(data); render();
+  const btn = document.getElementById('save-delivery-btn');
+  btn.textContent = '✅ تم الحفظ'; btn.classList.add('saved');
+  setTimeout(()=>{ btn.textContent = '💾 حفظ التحديث'; btn.classList.remove('saved'); }, 2500);
+  showToast('✅ تم تحديث بيانات التسليم');
+}
+
+function recalcCylinders(){
+  data.cylPerFamily = parseInt(document.getElementById('cyl-per-family').value) || 1;
+  saveData(data); render();
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ── قسم تحديث الإحصائيات اليدوية ──
+// (سيُستبدل بـ API لاحقاً)
+function buildUpdateBar(){
+  const bar = document.createElement('div');
+  bar.className = 'update-bar';
+  bar.innerHTML = `
+    <span class="ub-label">🔧 تحديث الإحصائيات يدوياً</span>
+    <div class="ub-sep"></div>
+    <label style="font-size:.76rem;color:var(--mu);font-weight:700;white-space:nowrap">إجمالي المسجلين</label>
+    <input type="number" id="ub-total" placeholder="0" min="0" style="width:80px" value="${data.total||''}">
+    <label style="font-size:.76rem;color:var(--mu);font-weight:700;white-space:nowrap">تم تسليمهم</label>
+    <input type="number" id="ub-delivered" placeholder="0" min="0" style="width:80px" value="${data.delivered||''}">
+    <label style="font-size:.76rem;color:var(--mu);font-weight:700;white-space:nowrap">غير مختومة</label>
+    <input type="number" id="ub-unstamped" placeholder="0" min="0" style="width:80px" value="${data.unstamped||''}">
+    <div class="ub-sep"></div>
+    <label style="font-size:.76rem;color:var(--mu);font-weight:700;white-space:nowrap">دفاتر</label>
+    <input type="number" id="ub-books" placeholder="0" min="0" style="width:70px" value="${data.books||''}">
+    <label style="font-size:.76rem;color:var(--mu);font-weight:700;white-space:nowrap">بيانات</label>
+    <input type="number" id="ub-stmts" placeholder="0" min="0" style="width:70px" value="${data.stmts||''}">
+    <label style="font-size:.76rem;color:var(--mu);font-weight:700;white-space:nowrap">مطلقات</label>
+    <input type="number" id="ub-divs" placeholder="0" min="0" style="width:70px" value="${data.divs||''}">
+    <div class="ub-sep"></div>
+    <button class="ub-btn" onclick="updateStats()">💾 تحديث</button>
+  `;
+  document.querySelector('.wrap').insertBefore(bar, document.querySelector('.stats-grid'));
+}
+
+function updateStats(){
+  data.total     = parseInt(document.getElementById('ub-total').value)     || 0;
+  data.delivered = parseInt(document.getElementById('ub-delivered').value) || 0;
+  data.unstamped = parseInt(document.getElementById('ub-unstamped').value) || 0;
+  data.books     = parseInt(document.getElementById('ub-books').value)     || 0;
+  data.stmts     = parseInt(document.getElementById('ub-stmts').value)     || 0;
+  data.divs      = parseInt(document.getElementById('ub-divs').value)      || 0;
+  saveData(data); render();
+  showToast('✅ تم تحديث الإحصائيات');
+}
+
+buildUpdateBar();
+render();
+</script>
+</body>
+</html>
