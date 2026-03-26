@@ -249,17 +249,8 @@ async function doSearch() {
   }
 
   try {
-    const qs  = new URLSearchParams(params).toString();
-
-const res = await fetch(`${READ_URL}?${qs}`, {
-  method: "GET",
-  headers: {
-    "Content-Type": "application/json",
-    "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvYWp1Zm53Y3pzZ3h3aGdwcGpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1NDE0NjcsImV4cCI6MjA5MDExNzQ2N30.yC9e87aEE4X8yipkXDrUebE3d6MCBIKSkCk7hCl-aNE",
-    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvYWp1Zm53Y3pzZ3h3aGdwcGpyIiwicm9sZSI6ImFub24يLCJpYXQiOjE3NzQ1NDE0NjcsImV4cCI6MjA5MDExNzQ2N30.yC9e87aEE4X8yipkXDrUebE3d6MCBIKSkCk7hCl-aNE"
-  }
-});
-
+const qs  = new URLSearchParams(params).toString();
+const res  = await fetch(`${READ_URL}?${qs}`);
 const data = await res.json();
 
     if (data.status !== 'OK') throw new Error(data.msg || 'خطأ');
