@@ -264,7 +264,10 @@ try {
 
   const data = await res.json();
 
-  if (data.status !== 'OK') throw new Error(data.msg || 'خطأ');
+ if (!res.ok) {
+  const errText = await res.text();
+  throw new Error(`Google error: ${res.status} - ${errText}`);
+}
 
   if (data.result) {
     showResult(data.result);
