@@ -248,27 +248,39 @@ async function doSearch() {
     return;
   }
 
-  try {
-const qs  = new URLSearchParams(params).toString();
-const res  = await fetch(`${READ_URL}?${qs}`);
-const data = await res.json();
+try {
+  const qs = new URLSearchParams(params).toString();
 
-    if (data.status !== 'OK') throw new Error(data.msg || 'خطأ');
+  const API_KEY = "YOUR_KEY_HERE";
 
-    if (data.result) {
-      showResult(data.result);
-    } else {
-      showNoResult();
+  const res = await fetch(`${READ_URL}?${qs}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": API_KEY,
+      "Authorization": `Bearer ${API_KEY}`
     }
-  } catch(err) {
-    document.getElementById('result-area').innerHTML = `
-      <div class="no-res">
-        <div class="ni">⚠️</div>
-        <h3>تعذّر الاتصال بقاعدة البيانات</h3>
-        <p>تأكد من اتصالك بالإنترنت وحاول مجدداً</p>
-      </div>`;
-    showToast('⚠️ خطأ في الاتصال');
+  });
+
+  const data = await res.json();
+
+  if (data.status !== 'OK') throw new Error(data.msg || 'خطأ');
+
+  if (data.result) {
+    showResult(data.result);
+  } else {
+    showNoResult();
   }
+
+} catch(err) {
+  document.getElementById('result-area').innerHTML = `
+    <div class="no-res">
+      <div class="ni">⚠️</div>
+      <h3>تعذّر الاتصال بقاعدة البيانات</h3>
+      <p>تأكد من اتصالك بالإنترنت وحاول مجدداً</p>
+    </div>`;
+  showToast('⚠️ خطأ في الاتصال');
+}
 }
 
 function showLoading() {
