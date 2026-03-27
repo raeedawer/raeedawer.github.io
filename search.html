@@ -259,12 +259,12 @@ try {
     }
   });
 
-  const data = await res.json();
-
- if (!res.ok) {
+if (!res.ok) {
   const errText = await res.text();
   throw new Error(`Google error: ${res.status} - ${errText}`);
 }
+
+const data = await res.json();
 
   if (data.results) {
     showResult(data.results[0]);
