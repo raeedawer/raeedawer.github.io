@@ -266,8 +266,8 @@ try {
   throw new Error(`Google error: ${res.status} - ${errText}`);
 }
 
-  if (data.result&& && data.results.length > 0) {
-    showResult(data.result[0]);
+  if (data.result) {
+    showResult(data.result);
   } else {
     showNoResult();
   }
