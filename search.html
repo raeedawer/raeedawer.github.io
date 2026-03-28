@@ -107,16 +107,36 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);min-height:100vh;direct
 </head>
 <body>
 
-<div class="hdr">
-  <div class="hdr-top">
-    <div class="embl">🏛️</div>
-    <div><h1>بلدية مدينة داعل</h1><p>محافظة درعا — الجمهورية العربية السورية</p></div>
+<div class="method-tabs">
+  <div class="mtab on" onclick="setMethod('ref_doc',this)">
+    <span class="mtab-ico">🔢</span>مرجع + وثيقة
   </div>
-  <div class="hdr-nav">
-    <a href="index.html" class="nav-link">📋 التسجيل</a>
-    <a href="stats.html" class="nav-link">📊 الإحصائيات</a>
-    <a href="search.html" class="nav-link active">🔍 التحقق من التسجيل</a>
+  <div class="mtab" onclick="setMethod('ref_name',this)">
+    <span class="mtab-ico">👤</span>مرجع + اسم
   </div>
+</div>
+
+<div class="fields-wrap">
+
+  <!-- مرجع + وثيقة -->
+  <div class="method-panel active" id="panel-ref_doc">
+    <div class="dual-fields">
+      <input type="text" id="inp-ref1" placeholder="الرقم المرجعي">
+      <input type="text" id="inp-doc" placeholder="رقم الوثيقة"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      <button class="dual-btn" onclick="doSearch()">🔍 بحث</button>
+    </div>
+  </div>
+
+  <!-- مرجع + اسم -->
+  <div class="method-panel" id="panel-ref_name">
+    <div class="dual-fields">
+      <input type="text" id="inp-ref2" placeholder="الرقم المرجعي">
+      <input type="text" id="inp-name" placeholder="الاسم الكامل">
+      <button class="dual-btn" onclick="doSearch()">🔍 بحث</button>
+    </div>
+  </div>
+
 </div>
 
 <div class="wrap">
@@ -134,30 +154,7 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);min-height:100vh;direct
       </div>
     </div>
 
-    <div class="fields-wrap">
-
-      <!-- طريقة 1: الرقم المرجعي وحده -->
-      <div class="method-panel active" id="panel-ref">
-        <div class="single-field">
-          <input type="text" id="inp-ref" placeholder="أدخل رقمك المرجعي — مثال: DAL-2026-DB-123456"
-            onkeydown="if(event.key==='Enter')doSearch()">
-          <button class="go-btn" onclick="doSearch()">🔍</button>
-        </div>
-      </div>
-
-      <!-- طريقة 2: الاسم + رقم الوثيقة (مطلوبان معاً) -->
-      <div class="method-panel" id="panel-combo">
-        <div class="dual-fields">
-          <input type="text" id="inp-name" placeholder="اسم رب الأسرة كاملاً (الاسم الأول + الأب + الجد + اللقب)"
-            onkeydown="if(event.key==='Enter')doSearch()">
-          <input type="text" id="inp-doc" placeholder="رقم الوثيقة (رقم الدفتر أو رقم القيد)"
-            oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-            onkeydown="if(event.key==='Enter')doSearch()">
-          <button class="dual-btn" onclick="doSearch()">🔍 بحث بالاسم ورقم الوثيقة معاً</button>
-        </div>
-      </div>
-
-    </div>
+   
 
     <div class="sec-note">
       🔒 البحث آمن ومحمي — طريقة الاسم + رقم الوثيقة تمنع أي شخص من الوصول لبيانات غيره
@@ -186,17 +183,18 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);min-height:100vh;direct
 
 <div class="toast" id="toast"></div>
 
-<script>
-const READ_URL = 'https://foajufnwczsgxwhgppjr.supabase.co/functions/v1/dynamic-worker';
-let currentMethod = 'ref';
+<script>const READ_URL = 'https://foajufnwczsgxwhgppjr.supabase.co/functions/v1/dynamic-worker';
+let currentMethod = 'ref_doc';
 
 function setMethod(m, el) {
   currentMethod = m;
+
   document.querySelectorAll('.mtab').forEach(t => t.classList.remove('on'));
   el.classList.add('on');
+
   document.querySelectorAll('.method-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + m).classList.add('active');
-  // مسح النتائج السابقة
+
   resetResult();
 }
 
@@ -205,155 +203,77 @@ function resetResult() {
 }
 
 async function doSearch() {
-  // ── جمع مدخلات البحث حسب الطريقة ──
+
   let params = {};
 
-  if (currentMethod === 'ref') {
-    const ref = document.getElementById('inp-ref').value.trim();
-    if (!ref) { showToast('⚠️ الرجاء إدخال الرقم المرجعي'); return; }
-    if (ref.length < 10) { showToast('⚠️ الرقم المرجعي غير صحيح'); return; }
-    params = { action: 'search', by: 'ref', q: ref };
+  // ✅ مرجع + وثيقة
+  if (currentMethod === 'ref_doc') {
+    const ref = document.getElementById('inp-ref1').value.trim();
+    const doc = document.getElementById('inp-doc').value.trim();
 
-  } else {
+    if (!ref) { showToast('⚠️ أدخل الرقم المرجعي'); return; }
+    if (!doc) { showToast('⚠️ أدخل رقم الوثيقة'); return; }
+
+    params = {
+      action: 'search',
+      by: 'secure_doc',
+      ref: ref,
+      doc: doc
+    };
+  }
+
+  // ✅ مرجع + اسم
+  if (currentMethod === 'ref_name') {
+    const ref  = document.getElementById('inp-ref2').value.trim();
     const name = document.getElementById('inp-name').value.trim();
-    const doc  = document.getElementById('inp-doc').value.trim();
-    if (!name) { showToast('⚠️ الرجاء إدخال الاسم كاملاً'); return; }
-    if (!doc)  { showToast('⚠️ الرجاء إدخال رقم الوثيقة أو القيد'); return; }
-    if (name.split(' ').filter(Boolean).length < 2) {
-      showToast('⚠️ أدخل الاسم الرباعي كاملاً');
+
+    if (!ref) { showToast('⚠️ أدخل الرقم المرجعي'); return; }
+    if (!name) { showToast('⚠️ أدخل الاسم الكامل'); return; }
+
+    if (name.split(' ').length < 2) {
+      showToast('⚠️ أدخل الاسم الكامل الصحيح');
       return;
     }
-    params = { action: 'search', by: 'combo', name, doc };
+
+    params = {
+      action: 'search',
+      by: 'secure_name',
+      ref: ref,
+      name: name
+    };
   }
 
   showLoading();
 
-  // وضع تجريبي عند فتح الملف مباشرة
-  if (window.location.protocol === 'file:') {
-    await new Promise(r => setTimeout(r, 750));
-    const demo = {
-      refNum: 'DAL-2026-DB-100001', docType: 'دفتر العائلة',
-      familyBookNum: '123456789', qaidNum: '001',
-      personName: 'محمد أحمد علي الزعبي',
-      neighborhood: 'الحي الشرقي', street: 'شارع السوق',
-      stampStatus: 'نعم مختوم', status: 'مقبول',
-      familyCount: '5', receivedAt: '15/01/2026، 10:30 ص'
-    };
-    // محاكاة تطابق دقيق
-    const found = (currentMethod === 'ref')
-      ? document.getElementById('inp-ref').value.trim() === demo.refNum
-      : document.getElementById('inp-name').value.trim() === demo.personName &&
-        [demo.familyBookNum, demo.qaidNum].includes(document.getElementById('inp-doc').value.trim());
-    found ? showResult(demo) : showNoResult();
-    return;
-  }
+  try {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetch(`${READ_URL}?${qs}`);
 
-try {
-  const qs = new URLSearchParams(params).toString();
-
-
-  const res = await fetch(`${READ_URL}?${qs}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json"
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(errText);
     }
-  });
 
-if (!res.ok) {
-  const errText = await res.text();
-  throw new Error(`Google error: ${res.status} - ${errText}`);
-}
+    const data = await res.json();
 
-const data = await res.json();
+    if (data.result) {
+      showResult(data.result);
+    } else {
+      showNoResult();
+    }
 
-  if (data.results) {
-    showResult(data.results[0]);
-  } else {
-    showNoResult();
+  } catch (err) {
+    console.error(err);
+
+    document.getElementById('result-area').innerHTML = `
+      <div class="no-res">
+        <div class="ni">⚠️</div>
+        <h3>تعذّر الاتصال</h3>
+        <p>حاول لاحقاً</p>
+      </div>`;
+
+    showToast('⚠️ خطأ في الاتصال');
   }
-
-} catch(err) {
-  document.getElementById('result-area').innerHTML = `
-    <div class="no-res">
-      <div class="ni">⚠️</div>
-      <h3>تعذّر الاتصال بقاعدة البيانات</h3>
-      <p>تأكد من اتصالك بالإنترنت وحاول مجدداً</p>
-    </div>`;
-  showToast('⚠️ خطأ في الاتصال');
-}
-}
-
-function showLoading() {
-  document.getElementById('result-area').innerHTML = `
-    <div class="loading">
-      <div class="loader"></div>
-      <p style="color:var(--mu);font-size:.84rem;font-weight:700">جاري البحث في قاعدة البيانات...</p>
-    </div>`;
-}
-
-function showResult(r) {
-  const isOk  = r.status === 'مقبول';
-  const cls   = isOk ? 'ok' : 'pnd';
-  const ico   = isOk ? '✅' : '⏳';
-  const stOk  = r.stampStatus === 'نعم مختوم';
-  const docNum = [r.familyBookNum, r.stmtDocNum, r.divDocNum]
-                   .find(v => v && v !== '—') || '—';
-
-  document.getElementById('result-area').innerHTML = `
-    <div class="result-card">
-      <div class="rc-top">
-        <div class="rc-ico ${cls}">${ico}</div>
-        <div style="flex:1">
-          <div class="rc-name">${r.personName || '—'}</div>
-          <div class="rc-ref">${r.refNum || '—'}</div>
-          <span class="badge ${cls}">${ico} ${r.status || '—'}</span>
-        </div>
-      </div>
-      <div class="rc-body">
-        <div class="rc-grid">
-          <div class="rf"><div class="rf-lbl">نوع الوثيقة</div><div class="rf-val">${r.docType||'—'}</div></div>
-          <div class="rf"><div class="rf-lbl">رقم الوثيقة / القيد</div><div class="rf-val">${docNum} / ${r.qaidNum||'—'}</div></div>
-          <div class="rf"><div class="rf-lbl">الحي / المنطقة</div><div class="rf-val">${r.neighborhood||'—'}</div></div>
-          <div class="rf"><div class="rf-lbl">الشارع / المعلم</div><div class="rf-val">${r.street||'—'}</div></div>
-          <div class="rf"><div class="rf-lbl">عدد أفراد الأسرة</div><div class="rf-val">${r.familyCount||'—'} أفراد</div></div>
-          <div class="rf" style="background:${stOk?'#e8f5ee':'#fff8e8'}">
-            <div class="rf-lbl">ختم البلدية</div>
-            <div class="rf-val" style="color:${stOk?'var(--ok)':'var(--warn)'}">${stOk?'✅ مختوم':'⚠️ غير مختوم'}</div>
-          </div>
-        </div>
-      </div>
-      <div class="rc-foot">
-        <small>📅 ${r.receivedAt || r.timestamp || '—'}</small>
-        <button class="copy-btn" onclick="copyRef('${r.refNum}')">📋 نسخ الرقم المرجعي</button>
-      </div>
-    </div>`;
-}
-
-function showNoResult() {
-  document.getElementById('result-area').innerHTML = `
-    <div class="no-res">
-      <div class="ni">🔍</div>
-      <h3>لم يُعثر على أي تسجيل</h3>
-      <p>
-        لم نجد تسجيلاً مطابقاً للبيانات المدخلة.<br><br>
-        تأكد من:<br>
-        • صحة الرقم المرجعي أو الاسم ورقم الوثيقة<br>
-        • أن الاسم مدخل كاملاً كما سُجّل في النموذج<br>
-        • أن رقم الوثيقة أو القيد صحيح تماماً<br><br>
-        إذا تأكدت من البيانات ولم تجد سجلك، تواصل مع البلدية.
-      </p>
-    </div>`;
-}
-
-function copyRef(ref) {
-  navigator.clipboard?.writeText(ref).catch(()=>{});
-  showToast('✅ تم نسخ: ' + ref);
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2800);
 }
 </script>
 </body>
